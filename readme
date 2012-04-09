@@ -1,0 +1,5 @@
+This theme is an experiment and mostly a copy paste job from bp-default(It is child theme of bp-default) to load profile pages via ajax.
+
+Thanks to my friend Bowe for reminding me about this long lost experiment.
+
+This is not for production usage as it lacks a lot of things at the moment(most importantly the sub menu rendition on profile pages)
