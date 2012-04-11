@@ -2,6 +2,8 @@
     
     var jq=jQuery;
     jq(document).ready(function (){
+        //
+    
    /* When a navigation tab is clicked - e.g. | All Groups | My Groups | */
 	jq('div.member-user-nav').click( function(event) {
 		
@@ -23,7 +25,44 @@
 
 			return false;
 		}
-	}); 
+	});
+       	jq('div#subnav li a').live('click', function(event) {
+		
+                var cur_link=jq(event.target);//there is something bad, the id naming convention of activity is really bad
+		var li = jq(event.target).parent();//it is li
+
+		if ( 'LI' == event.target.parentNode.nodeName && !li.hasClass('last') ) {
+                    
+			var css_id = li.attr('id');//.split( '-' );
+			//replace personal li in the attribute
+                        css_id=css_id.replace('-personal-li','');
+                        //replace the 'activity-';
+                        css_id=css_id.replace('activity-','');
+                        var extras=css_id;//this will be action
+                        
+                        //now, let us talk about the current component/object
+                        var parent_nav_li= jq(".member-user-nav li.selected").get(0);
+                       // parent_nav_li=jq(parent_nav_li);
+                        
+                        css_id=jq(parent_nav_li).attr('id').split( '-' );
+                        
+                        
+                        
+                        var object = css_id[0];
+
+			//if ( 'activity' == object )
+				//return false;
+
+			var scope = css_id[1];
+			var filter = jq("#" + object + "-order-select select").val();
+			var search_terms = jq("#" + object + "_search").val();
+
+			bpcustom_filter_request( object, filter, scope, 'div.' + object, search_terms, 1, extras );
+
+			return false;
+		}
+	});  
+        
     });     
         
  function bpcustom_filter_request( object, filter, scope, target, search_terms, page, extras ) {
@@ -43,7 +82,7 @@
 	jq('div.member-user-nav option[value="' + filter + '"]').prop( 'selected', true );
 
 	if ( 'activity' == object ){
-                bpcustom_activity_request(scope, filter);
+                bpcustom_activity_request(scope, filter,extras);
                 return false; 
             }
 	
@@ -66,7 +105,7 @@
 		bp_ajax_request.abort();
 
 	bp_ajax_request = jq.post( ajaxurl, {
-		action: object + '_filter',
+		action: 'profile_'+object + '_filter',
 		'cookie': encodeURIComponent(document.cookie),
 		'object': object,
 		'filter': filter,
@@ -85,7 +124,7 @@
 	});
 }
 
-function bpcustom_activity_request(scope, filter) {
+function bpcustom_activity_request(scope, filter,extras) {
 	/* Save the type and filter to a session cookie */
 	jq.cookie( 'bp-activity-scope', scope, {path: '/'} );
 	jq.cookie( 'bp-activity-filter', filter, {path: '/'} );
@@ -101,11 +140,13 @@ function bpcustom_activity_request(scope, filter) {
 		bp_ajax_request.abort();
 
 	bp_ajax_request = jq.post( ajaxurl, {
-		action: 'activity_widget_filter',
+		action: 'profile_activity_filter',
 		'cookie': encodeURIComponent(document.cookie),
 		'_wpnonce_activity_filter': jq("input#_wpnonce_activity_filter").val(),
 		'scope': scope,
-		'filter': filter
+		'filter': filter,
+                'object':'activity',
+                'extras':extras
 	},
 	function(response)
 	{
@@ -121,7 +162,7 @@ function bpcustom_activity_request(scope, filter) {
 
 		jq('div.member-user-nav li.selected').removeClass('loading');
 
-	}, 'json' );
+	},'json' ) ;
 }
    
 })(jQuery);
