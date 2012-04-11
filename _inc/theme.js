@@ -5,7 +5,7 @@
         //
     
    /* When a navigation tab is clicked - e.g. | All Groups | My Groups | */
-	jq('div.member-user-nav').click( function(event) {
+	jq('div.member-user-nav li a').click( function(event) {
 		
 
 		var target = jq(event.target).parent();
